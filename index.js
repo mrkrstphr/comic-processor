@@ -17,7 +17,7 @@ if (await exists(path.join(process.cwd(), 'app.pid'))) {
 
 await fs.writeFile('app.pid', process.pid.toString());
 
-const dataDir = path.join(process.cwd(), 'data');
+const dataDir = process.env.DATA_DIR || path.join(process.cwd(), 'data');
 
 await epubExtractor(path.join(dataDir, 'epub'), path.join(dataDir, 'folder'));
 await zipExtractor(path.join(dataDir, 'zip'), path.join(dataDir, 'folder'));
