@@ -4,16 +4,14 @@ import path from 'path';
 import { exists, mkdir, removeRecursive } from '../utils.js';
 
 async function processFiles(inputPath, outputPath) {
-  const files = await fs.readdir(inputPath);
-
-  await Promise.all(
-    files
-      .filter((file) => file.endsWith('.cbz') || file.endsWith('.zip'))
-      .map(async (file) => {
-        await processFile(path.join(inputPath, file), outputPath);
-        await removeRecursive(path.join(inputPath, file));
-      }),
+  const files = (await fs.readdir(inputPath)).filter(
+    (file) => file.endsWith('.cbz') || file.endsWith('.zip'),
   );
+
+  for (const file of files) {
+    await processFile(path.join(inputPath, file), outputPath);
+    await removeRecursive(path.join(inputPath, file));
+  }
 }
 
 function removeFileExtension(filename) {

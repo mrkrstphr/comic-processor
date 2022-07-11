@@ -16,6 +16,8 @@ async function processFiles(inputPath, outputPath) {
 }
 
 async function processDirectory(inputPath, outputPath) {
+  console.log(`[cbz-generator] Working on ${inputPath}`);
+
   const issueOutputPath = `${path.join(outputPath, path.basename(inputPath))}.cbz`;
   const outputFile = new AdmZip();
 

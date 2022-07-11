@@ -1,3 +1,4 @@
+import exifr from 'exifr';
 import fs from 'fs/promises';
 import path from 'path';
 import { ImagePool } from '@squoosh/lib';
@@ -19,6 +20,8 @@ async function processFiles(inputPath, outputPath) {
 async function processDirectory(inputPath, outputPath) {
   const imagePool = new ImagePool(cpus().length);
   const issueOutputPath = path.join(outputPath, path.basename(inputPath));
+
+  console.log(`[sizer] Working on ${inputPath}`);
 
   await mkdir(issueOutputPath);
 

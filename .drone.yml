@@ -1,0 +1,40 @@
+kind: pipeline
+type: docker
+name: deployment
+
+steps:
+- name: create_release
+  image: plugins/docker
+  settings:
+    build_args_from_env:
+    - DRONE_COMMIT_SHA
+    - DRONE_TAG
+    custom_dns: 192.168.0.163
+    username:
+      from_secret: docker_hub_username
+    password:
+      from_secret: docker_hub_access_token
+    repo: mrkrstphr/comic-processor
+    tags:
+      - latest
+      - "${DRONE_TAG}"
+
+- name: notify
+  image: drillster/drone-email
+  settings:
+    host: smtp.gmail.com
+    username:
+      from_secret: email_username
+    password:
+      from_secret: email_password
+    from:
+      from_secret: email_username
+  when:
+    status: [ success, failure ]
+
+trigger:
+  event:
+  - tag
+  ref:
+    include:
+    - refs/tags/v*
