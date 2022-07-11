@@ -1,6 +1,8 @@
 FROM alpine:3.16
 
 ARG BUILD_DATE
+ARG DRONE_TAG
+ARG DRONE_COMMIT_SHA
 
 LABEL maintainer="kristopherwilson@gmail.com"
 
@@ -10,8 +12,8 @@ LABEL org.label-schema.name="mrkrstphr/comic-processor"
 LABEL org.label-schema.description="Processes various comic files"
 LABEL org.label-schema.url="https://gitea.wilsons.casa/mrkrstphr/comic-processor"
 LABEL org.label-schema.vcs-url="https://gitea.wilsons.casa/mrkrstphr/comic-processor"
-LABEL org.label-schema.vcs-ref=$VCS_REF
-LABEL org.label-schema.version=$BUILD_VERSION
+LABEL org.label-schema.vcs-ref=$DRONE_COMMIT_SHA
+LABEL org.label-schema.version=$DRONE_TAG
 
 RUN set -x && \
     apk --no-cache add \
