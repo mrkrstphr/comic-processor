@@ -1,0 +1,6 @@
+services:
+  processor:
+    image: mrkrstphr/comic-processor
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
