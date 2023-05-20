@@ -1,4 +1,7 @@
 {
+  "name": "comic-processor",
+  "description": "Processes comic book files to compress images and convert formats",
+  "author": "Kristopher Wilson <kristopherwilson|at|gmail|dot|com>",
   "type": "module",
   "dependencies": {
     "@squoosh/lib": "^0.4.0",
