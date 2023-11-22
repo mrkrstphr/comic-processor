@@ -50,3 +50,7 @@ export function pidIsRunning(pid) {
     return false;
   }
 }
+
+export function log(util, message) {
+  process.stdout.write(`[${util}] ${message}`);
+}

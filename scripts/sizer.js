@@ -1,9 +1,7 @@
-import exifr from 'exifr';
 import fs from 'fs/promises';
 import path from 'path';
-import { ImagePool } from '@squoosh/lib';
-import { cpus } from 'os';
-import { mkdir, removeRecursive } from '../utils.js';
+import sharp from 'sharp';
+import { log, mkdir, removeRecursive } from '../utils.js';
 
 async function processFiles(inputPath, outputPath) {
   const files = await fs.readdir(inputPath);
@@ -11,17 +9,17 @@ async function processFiles(inputPath, outputPath) {
   for (const directory of files) {
     const stats = await fs.lstat(path.join(inputPath, directory));
     if (stats.isDirectory()) {
-      await processDirectory(path.join(inputPath, directory), outputPath);
-      await removeRecursive(path.join(inputPath, directory));
+      if (await processDirectory(path.join(inputPath, directory), outputPath)) {
+        await removeRecursive(path.join(inputPath, directory));
+      }
     }
   }
 }
 
 async function processDirectory(inputPath, outputPath) {
-  const imagePool = new ImagePool(cpus().length);
   const issueOutputPath = path.join(outputPath, path.basename(inputPath));
 
-  console.log(`[sizer] Working on ${inputPath}`);
+  log('sizer', `Working on ${path.basename(inputPath)}... `);
 
   await mkdir(issueOutputPath);
 
@@ -30,19 +28,26 @@ async function processDirectory(inputPath, outputPath) {
     .map((file) => path.join(inputPath, file));
 
   for (const file of files) {
-    const image = imagePool.ingestImage(file);
-    const encodeOptions = {
-      mozjpeg: {},
-    };
+    if (path.basename(file).startsWith('.')) continue;
 
-    await image.encode(encodeOptions);
+    try {
+      await sharp(file)
+        .jpeg({ mozjpeg: true })
+        .toFile(path.join(issueOutputPath, path.basename(file)));
+    } catch (e) {
+      process.stdout.write('ERROR!\n');
+      log('sizer', `Error: ${e}\n`);
+      log('sizer', `Error file = [${file}]\n`);
 
-    const rawEncodedImage = (await image.encodedWith.mozjpeg).binary;
+      await removeRecursive(issueOutputPath);
 
-    await fs.writeFile(path.join(issueOutputPath, path.basename(file)), rawEncodedImage);
+      return false;
+    }
   }
 
-  await imagePool.close();
+  process.stdout.write('DONE.\n');
+
+  return true;
 }
 
 export default processFiles;

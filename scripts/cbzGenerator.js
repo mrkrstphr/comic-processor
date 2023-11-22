@@ -1,7 +1,7 @@
 import AdmZip from 'adm-zip';
 import fs from 'fs/promises';
 import path from 'path';
-import { removeRecursive } from '../utils.js';
+import { log, removeRecursive } from '../utils.js';
 
 async function processFiles(inputPath, outputPath) {
   const files = await fs.readdir(inputPath);
@@ -16,7 +16,7 @@ async function processFiles(inputPath, outputPath) {
 }
 
 async function processDirectory(inputPath, outputPath) {
-  console.log(`[cbz-generator] Working on ${inputPath}`);
+  log('cbz-generator', `Working on ${inputPath}... `);
 
   const issueOutputPath = `${path.join(outputPath, path.basename(inputPath))}.cbz`;
   const outputFile = new AdmZip();
@@ -30,6 +30,8 @@ async function processDirectory(inputPath, outputPath) {
   }
 
   outputFile.writeZip(issueOutputPath);
+
+  process.stdout.write('DONE.\n');
 }
 
 export default processFiles;
