@@ -3,6 +3,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { log, removeRecursive } from '../utils.js';
 
+const allowedExtensions = ['.jpeg', '.jpg', '.png', '.webp'];
+
 async function processFiles(inputPath, outputPath) {
   const files = await fs.readdir(inputPath);
 
@@ -22,7 +24,7 @@ async function processDirectory(inputPath, outputPath) {
   const outputFile = new AdmZip();
 
   const files = (await fs.readdir(inputPath))
-    .filter((file) => file.endsWith('.jpeg') || file.endsWith('.jpg') || file.endsWith('.png'))
+    .filter((file) => allowedExtensions.includes[path.extname(file)])
     .map((file) => path.join(inputPath, file));
 
   for (const file of files) {
